@@ -41,12 +41,20 @@ setup error: helper_sandbox_lock_failed: lock sandbox bin dir
 
 ### 方案 A：一键脚本（推荐）
 
-1. 从本仓库下载 [`scripts/`](scripts/) 文件夹（**两个文件要放在同一目录**）；
+1. 从本仓库下载 [`scripts/`](scripts/) 文件夹（**三个文件要放在同一目录**）；
 2. 双击 **`Fix-Codex-Setup.cmd`**；
 3. 在 UAC 弹窗点**「是」**（停服务需要管理员权限）；
-4. 等绿色的 **`[完成]`** 行出现——通常 1~3 分钟：
+4. 等绿色的 **`[DONE]`** 行出现——通常 1~3 分钟：
 
 ![工具运行成功](docs/images/tool-run-success.png)
+
+**把工具装到桌面并配上图标**（可选，在仓库根目录执行一条命令）：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-To-Desktop.ps1
+```
+
+会在你的桌面创建带自定义图标（蓝色圆角块 + 白色扳手 + 绿色对勾）的 **`Fix-Codex-Setup`** 快捷方式。装完后请**保持仓库文件夹位置不变**——快捷方式指向它。如果桌面上已经有一个原始的 `Fix-Codex-Setup.cmd` 文件，可以删掉，快捷方式代替了它。
 
 脚本做的事（所有步骤幂等，随时可重复运行）：
 
@@ -158,6 +166,31 @@ Start-Service CodexSandboxService.OpenAI.Codex
 
 **Q：停了服务还是失败怎么办？**
 欢迎开 issue，附上你的 Windows 版本（winver）、Codex 版本、最新 `sandbox-*.log` 的末尾几行。不同机器的占锁者可能不同（比如杀毒软件），日志会写明失败在哪一步。
+
+## 让 AI 助手帮你部署
+
+不想手动折腾？把本仓库克隆到本地后，大多数编程 Agent（Codex CLI、Cursor、Claude Code、GitHub Copilot 等）会**自动读取仓库根目录的 [`AGENTS.md`](AGENTS.md)**——里面是经过实测的分步指令：怎么装桌面快捷方式、怎么跑修复、怎么验证成功，以及 Agent **不许碰什么**（安全边界都写死了）。
+
+直接把下面的提示词粘给你的 AI：
+
+**只部署（不跑修复、不改动 Codex 本身）：**
+
+```text
+我刚克隆了 Codex-windows-setup-fix 这个仓库。请阅读它的 AGENTS.md 并执行任务 A：
+把修复工具以带自定义图标的快捷方式安装到我的桌面上，验证快捷方式创建成功，
+然后告诉我当 Codex 桌面版出现 "Windows setup didn't finish" 横幅时该怎么用。
+如果弹出 UAC，我会点“是”。
+```
+
+**现在就修（看到故障横幅时用这个）：**
+
+```text
+我刚克隆了 Codex-windows-setup-fix 这个仓库。请阅读它的 AGENTS.md 并执行任务 B：
+先告诉我将要发生什么，然后立刻在我机器上运行修复，等到绿色 [DONE] 行出现后，
+验证 setup_marker.json 和 setup_error.json。UAC 弹窗我会点“是”。
+```
+
+即使你的 Agent 不会自动读 `AGENTS.md` 也没关系——提示词里让它去读，它照做即可。
 
 ## 反馈与贡献
 

@@ -41,12 +41,20 @@ The in-app **Retry setup** button only re-runs the helper — it never stops the
 
 ### Option A — one-click script (recommended)
 
-1. Download the [`scripts/`](scripts/) folder from this repo (keep both files together in the same folder);
+1. Download the [`scripts/`](scripts/) folder from this repo (keep the three files together in the same folder);
 2. Double-click **`Fix-Codex-Setup.cmd`**;
 3. Approve the **UAC** prompt (administrator rights are needed to stop the service);
 4. Wait for the green **`[DONE]`** line — typically 1–3 minutes:
 
 ![Tool run success](docs/images/tool-run-success.png)
+
+**Put it on your desktop with a proper icon** (optional, one command from the repo root):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\Install-To-Desktop.ps1
+```
+
+This creates a `Fix-Codex-Setup` shortcut on your desktop with a custom icon (blue tile + wrench + green check). Keep the repo folder where it is afterwards — the shortcut points into it. If a bare `Fix-Codex-Setup.cmd` already sits on your desktop, delete it — the shortcut replaces it.
 
 What it does (all steps are idempotent — safe to run any time):
 
@@ -158,6 +166,29 @@ Only OpenAI.Codex's own things: it kills `ChatGPT.exe` / `codex.exe` / `codex-wi
 
 **Q: My setup failed again even with the service stopped.**
 Please open an issue with your Windows build, Codex version, and the tail of the newest `sandbox-*.log` (see below). Different machines may have a different lock holder (e.g. antivirus) — the log names the failing step.
+
+## Deploy with your AI assistant
+
+Prefer to have an AI do the wiring? Most coding agents (Codex CLI, Cursor, Claude Code, GitHub Copilot, …) automatically read this repo's [`AGENTS.md`](AGENTS.md), which contains verified step-by-step instructions for installing the shortcut, running the fix, verifying success — and the safety limits the agent must not cross (what it may touch, what it may not).
+
+Paste one of these prompts:
+
+```text
+I cloned the repo Codex-windows-setup-fix. Read its AGENTS.md and follow Task A:
+install the fix tool to my desktop as a shortcut with its custom icon, verify the
+shortcut was created, then tell me exactly how to use it when the Codex desktop
+shows the "Windows setup didn't finish" banner. If a UAC prompt appears, I will
+approve it.
+```
+
+```text
+I cloned the repo Codex-windows-setup-fix. Read its AGENTS.md and follow Task B:
+run the fix on my machine right now (explain what will happen first), wait for the
+green [DONE] line, then verify setup_marker.json and setup_error.json. I will approve
+the UAC prompt.
+```
+
+The first prompt only deploys the tool (safe, changes nothing about Codex itself); the second actually runs the fix — use it when you see the failure banner. If your agent does not auto-read `AGENTS.md`, the prompts still work: the agent will open the file and follow it.
 
 ## Reporting your experience
 
